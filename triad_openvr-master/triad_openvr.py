@@ -157,11 +157,27 @@ class triad_openvr():
     
     def checkEvent(self):
         event = openvr.VREvent_t()
+        result = (False,)
         if(self.vr.pollNextEvent(event)):
             trackedDeviceClass = self.vr.getTrackedDeviceClass(event.trackedDeviceIndex)
             if(trackedDeviceClass != 2):
                 return
-                # this is a placeholder, but there isn't a controller 
-                # involved so the rest of the snippet should be skipped
-            
-                
+            role = self.vr.getControllerRoleForTrackedDeviceIndex(event.trackedDeviceIndex)
+            if(role == openvr.TrackedControllerRole_Invalid):
+                print("controller not in base")
+                return result
+            elif(role == openvr.TrackedControllerRole_LeftHand):
+                result = (True, "left")
+            elif(role == openvr.TrackedControllerRole_RightHand):
+                result = (True, "right")
+            if(event.data.controller.button == openvr.k_EButton_Grip):
+                if(event.eventType == openvr.VREvent_ButtonPress):
+                    result += (openvr.k_EButton_Grip, openvr.VREvent_ButtonPress)
+                elif(event.eventType == openvr.VREvent_ButtonUnpress):
+                    result += (openvr.k_EButton_Grip, openvr.VREvent_ButtonUnpress)
+            elif(event.data.controller.button == openvr.k_EButton_SteamVR_Trigger):
+                if(event.eventType == openvr.VREvent_ButtonPress):
+                    result += (openvr.k_EButton_SteamVR_Trigger, openvr.VREvent_ButtonPress)
+                elif(event.eventType == openvr.VREvent_ButtonUnpress):
+                    result += (openvr.k_EButton_SteamVR_Trigger, openvr.VREvent_ButtonUnpress)
+        return result
