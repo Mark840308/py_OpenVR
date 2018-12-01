@@ -21,8 +21,8 @@ if interval:
             txt += "%.4f" % each
             txt += " "
         print("\r" + txt, end="")
-        event = v.checkEvent()
-        if(event[0]):
+        event = list()
+        if(v.checkEvent(event)):
             print(event)
         sleep_time = interval-(time.time()-start)
         if sleep_time>0:
