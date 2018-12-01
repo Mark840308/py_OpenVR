@@ -22,9 +22,14 @@ def subThreadIn(conn, connNumber):
 			for each in v.devices["controller_1"].get_pose_euler():
 				txt += "%.4f" % each
 				txt += " "
+			txt += "\n"
+			event = list()
+			if(v.checkEvent(event)):
+				txt += " ".join(event)
+				txt += "\n"
 			print("\r" + txt, end="")
 			conn.sendall(txt.encode("utf-8"))
-			sleep_time = 0.1
+			sleep_time = 1/60
 			if sleep_time > 0:
 				time.sleep(sleep_time)
 		except (OSError, ConnectionResetError):
