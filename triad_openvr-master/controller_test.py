@@ -2,7 +2,12 @@ import triad_openvr
 import time
 import sys
 
-v = triad_openvr.triad_openvr()
+while True:
+    v = triad_openvr.triad_openvr()
+    if(len(v.object_names["Controller"]) >= 2):
+        break
+    print("\r" + "沒有找到足夠的tracker, 5秒後重試")
+    time.sleep(5)
 v.print_discovered_objects()
 
 if len(sys.argv) == 1:
@@ -18,9 +23,13 @@ if interval:
         start = time.time()
         txt = ""
         for each in v.devices["controller_1"].get_pose_euler():
+                txt += "%.4f" % each
+                txt += " "
+        txt += "\n"
+        for each in v.devices["controller_2"].get_pose_euler():
             txt += "%.4f" % each
             txt += " "
-        print("\r" + txt, end="")
+        print("\n" + txt, end="")
         event = list()
         if(v.checkEvent(event)):
             print(event)

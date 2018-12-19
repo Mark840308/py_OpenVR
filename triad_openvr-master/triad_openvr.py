@@ -10,6 +10,7 @@ def update_text(txt):
 
 #Convert the standard 3x4 position/rotation matrix to a x,y,z location and the appropriate Euler angles (in degrees)
 def convert_to_euler(pose_mat):
+    print(pose_mat)
     yaw = 180 / math.pi * math.atan(pose_mat[1][0] /pose_mat[0][0])
     pitch = 180 / math.pi * math.atan(-1 * pose_mat[2][0] / math.sqrt(pow(pose_mat[2][1], 2) + math.pow(pose_mat[2][2], 2)))
     roll = 180 / math.pi * math.atan(pose_mat[2][1] /pose_mat[2][2])
@@ -167,22 +168,22 @@ class triad_openvr():
             if(role == openvr.TrackedControllerRole_Invalid):
                 print("controller not in base")
                 return False
-            elif(role == openvr.TrackedControllerRole_LeftHand):
-                result.append(["0"])
-            elif(role == openvr.TrackedControllerRole_RightHand):
-                result.append(["1"])
+            # elif(role == openvr.TrackedControllerRole_LeftHand):
+            #     result.append("0")
+            # elif(role == openvr.TrackedControllerRole_RightHand):
+            #     result.append("1")
             if(event.data.controller.button == openvr.k_EButton_Grip):
                 if(event.eventType == openvr.VREvent_ButtonPress):
-                    result.append([openvr.k_EButton_Grip, openvr.VREvent_ButtonPress])
+                    result += ([str(openvr.k_EButton_Grip), str(openvr.VREvent_ButtonPress)])
                 elif(event.eventType == openvr.VREvent_ButtonUnpress):
-                    result.append([openvr.k_EButton_Grip, openvr.VREvent_ButtonUnpress])
+                    result += ([str(openvr.k_EButton_Grip), str(openvr.VREvent_ButtonUnpress)])
                 else:
                     return False
             elif(event.data.controller.button == openvr.k_EButton_SteamVR_Trigger):
                 if(event.eventType == openvr.VREvent_ButtonPress):
-                    result.append([openvr.k_EButton_SteamVR_Trigger, openvr.VREvent_ButtonPress])
+                    result += ([str(openvr.k_EButton_SteamVR_Trigger), str(openvr.VREvent_ButtonPress)])
                 elif(event.eventType == openvr.VREvent_ButtonUnpress):
-                    result.append([openvr.k_EButton_SteamVR_Trigger, openvr.VREvent_ButtonUnpress])
+                    result += ([str(openvr.k_EButton_SteamVR_Trigger), str(openvr.VREvent_ButtonUnpress)])
                 else:
                     return False
             else:

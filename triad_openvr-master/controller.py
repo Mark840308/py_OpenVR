@@ -4,9 +4,14 @@ import sys
 import socket
 import threading
 
-host, port =  "127.0.0.1", 25001
+host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-v = triad_openvr.triad_openvr()
+while True:
+	v = triad_openvr.triad_openvr()
+	if(len(v.object_names["Controller"]) >= 2):
+		break
+	print("\r" + "沒有找到足夠的tracker, 5秒後重試")
+	time.sleep(5)
 v.print_discovered_objects()
 sock.bind((host, port))
 sock.listen(5)
@@ -23,10 +28,13 @@ def subThreadIn(conn, connNumber):
 				txt += "%.4f" % each
 				txt += " "
 			txt += "\n"
+			for each in v.devices["controller_2"].get_pose_euler():
+				txt += "%.4f" % each
+				txt += " "
+			txt += "\n"
 			event = list()
 			if(v.checkEvent(event)):
 				txt += " ".join(event)
-				txt += "\n"
 			print("\r" + txt, end="")
 			conn.sendall(txt.encode("utf-8"))
 			sleep_time = 1/60
@@ -45,7 +53,6 @@ def main():
 		conn, addr = sock.accept()
 		print('Connected with ' + addr[0] + ':' + str(addr[1]))
 		try:
-			conn.send(b"success")
 			mythread = threading.Thread(target=subThreadIn, args=(conn, conn.fileno()))
 			mythread.setDaemon(True)
 			mythread.start()
